@@ -8,6 +8,7 @@ public class Core {
 
 	// File Database
 	public static File[] f;
+	public static ArrayList<String> ss;
 	// File Folder
 	public static File fold = new File("Articles");
 	
@@ -18,10 +19,15 @@ public class Core {
 			fold.mkdirs();
 		// Collect the files
 		f = fold.listFiles();
+		ss = new ArrayList<String>();
 		// Reading time
 		for(File file : f) {
 			Scanner s = new Scanner(file);
-			// TODO add reader
+			//Reads the Files
+			String tempS = "";
+			while(s.hasNextLine)
+			        tempS =+ s.nextLine();
+			ss.add(tempS);
 		}
 	}
 }
