@@ -2,6 +2,7 @@ package com.pc.ang;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -12,7 +13,6 @@ public class Core {
 	public static ArrayList<String> ss;
 	// File Folder
 	public static File fold = new File("Articles");
-	public static File result = new File("Data");
 	
 	// Main
 	public static void main(String[] args) throws FileNotFoundException {
@@ -34,18 +34,27 @@ public class Core {
 		}
 		s.close();
 		
-		/*Counting*/
-		// Test for Folder
-		if(!(result.exists() && result.isDirectory()))
-			result.mkdirs();
 		// Filtering & Analysising
-		int count = 0;
+		Hashtable<String, Integer> cLt = new Hashtable<>();
 		for(String art : ss) {
 			// No Articles
-			art = art.replaceAll("[Ll]es |[Ll][ea] |[Ll]'|[uU]n(e)? |[dD]e(s)? |[Dd]'|[¿‡] ", "");
-			// Create New File
-			File re = new File("result\"" + f[count]);
+			art = art.replaceAll("[Ll]es |[Ll][ea] |[Ll]'|[uU]n(e)? |[dD]e(s)? |[Dd]'|[√Ä√†] ", "");
+			// Counting
+			for(String wrd : art.split(" ")) {
+				if(!cLt.containsKey(wrd))
+					cLt.put(wrd, 1);
+				else
+					cLt.replace(wrd, cLt.get(wrd) + 1);
+			}
+			
 		}
-		
+		// Create Results
+		String toPrint = "";
+		for(String ky : cLt.keySet())
+			toPrint += ky + " - " + clt.get(ky) + "\n";
+		FileWriter rsult = new FileWriter("Results");
+		rsult.write(toPrint);
+		rsult.flush();
+		rsult.close();
 	}
 }
