@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Scanner;
 
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+
 public class Core {
 
 	// File Database
@@ -16,7 +18,7 @@ public class Core {
 	public static File fold = new File("Articles");
 	
 	// Main
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, FailingHttpStatusCodeException, InterruptedException {
 		// Test for Folder
 		if(!(fold.exists() && fold.isDirectory()))
 			fold.mkdirs();
@@ -66,5 +68,7 @@ public class Core {
 		rsult.write(toPrint);
 		rsult.flush();
 		rsult.close();
+		
+		System.out.println(Checker.check("anglicismm"));
 	}
 }

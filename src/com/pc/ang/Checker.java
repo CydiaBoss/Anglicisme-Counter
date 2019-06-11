@@ -7,10 +7,7 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.gargoylesoftware.htmlunit.html.Keyboard;
-import com.gargoylesoftware.htmlunit.javascript.host.event.KeyboardEvent;
 
 public class Checker {
 
@@ -29,19 +26,33 @@ public class Checker {
 	 * Oof
 	 * @throws FailingHttpStatusCodeException 
 	 * Oof
+	 * @throws InterruptedException 
 	 */
-	public static boolean check(String wrd) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+	public static boolean check(String wrd) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 		// Creates New Client
 		WebClient c = new WebClient();
+		c.getOptions().setUseInsecureSSL(true);
+		c.getOptions().setCssEnabled(false);
+		c.getOptions().setAppletEnabled(true);
+		c.getOptions().setJavaScriptEnabled(true);
+		c.getOptions().setActiveXNative(true);
+		System.out.println("1");
 		// Get Page
 		HtmlPage pg = c.getPage("https://www.dictionnaire-academie.fr/");
+		c.waitForBackgroundJavaScript(2000);
 		// Get Form
 		HtmlForm dic = pg.getFormByName("frm_search");
 		// Get Inputs
 		HtmlTextInput srch = dic.getInputByName("term");
 		// Fill out
 		srch.type(wrd);
-		dic.type(KeyboardEvent.TYPE_SUBMIT);
+		// Check Results
+		c.waitForBackgroundJavaScript(2000);
+		int test = pg.getByXPath("//div[contains(@class, 'noresult')]").size();
+		pg.refresh();
+		c.close();
+		if(test >= 1)
+			return true;
 		
 		/* Sample of Website
 		 <form name="frm_search" id="frm_search" action="/search" method="post">
