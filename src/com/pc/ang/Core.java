@@ -20,6 +20,8 @@ public class Core {
 	public static ArrayList<String> ss;
 	// File Folder
 	public static File fold = new File("Articles");
+	public static File reslt = new File("Results");
+	// Online Client
 	public static Checker dict;
 	
 	// Main
@@ -27,7 +29,9 @@ public class Core {
 		// Test for Folder
 		if(!(fold.exists() && fold.isDirectory()))
 			fold.mkdirs();
-		System.out.println();
+		if(!(reslt.exists() && !reslt.isDirectory()))
+			reslt.createNewFile();
+		System.out.println("Files Found\n");
 		// Collect the files
 		f = fold.listFiles();
 		ss = new ArrayList<String>();
@@ -46,13 +50,13 @@ public class Core {
 			// No Capitals
 			art = art.toLowerCase();
 			// No Articles
-			art = art.replaceAll("les |l[ea] |l'|un(e)? |de(s)? |d'|[Àà] |au(x)? |ce(tte)?(s)? ", "");
+			art = art.replaceAll("les |l[ea] |l'|un(e)? |de(s)? |d'|[Àà] |au(x)? |ce(tte)?(s)? ", " ");
 			// No Pronouns
 			art = art.replaceAll("(-)?(je |tu |j'|noun |vous |(qu')?il(s)? |(qu')?elle(s)? |[(qu') ]on |qui )|[mts](e |')|[' ]en |[' ]y ", " ");
 			// No Numbers
-			art = art.replaceAll("[0-9](%)?", "");
+			art = art.replaceAll("[0-9](%)?", " ");
 			// No Punctuation
-			art = art.replaceAll("[\\.,]|( )?[!\\?:;]| [«»]", "");
+			art = art.replaceAll("[\\.,]|( )?[!\\?:;]| [«»]", " ");
 			// No Random Whitespace
 			art = art.replaceAll("( )+", " ");
 			// Trim
@@ -73,20 +77,20 @@ public class Core {
 		for(String ky : cLt.keySet()) {
 			if (dict.check(ky)) {
 				toPrint += ky + " - " + cLt.get(ky) + "\n";
-				System.err.println(ky + " - Anglicisme");
+				System.err.println("\"" + ky + "\" - Anglicisme");
 			}else
-				System.out.println(ky + " - Pas d'Anglicisme");
+				System.out.println("\"" + ky + "\" - Pas d'Anglicisme");
 			wrdCnt += cLt.get(ky);
 		}
 		toPrint += "\n\nWord Count: " + wrdCnt;
 		// Writer
-		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(new File("Results")), StandardCharsets.UTF_8);
+		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(reslt), StandardCharsets.UTF_8);
 		writer.write(toPrint);
 		writer.flush();
 		writer.close();
 		// Close Browser
 		dict.close();
 		// Finish
-		System.out.println("Done");
+		System.out.println(toPrint + "\nDone");
 	}
 }

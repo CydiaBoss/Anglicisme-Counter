@@ -121,6 +121,8 @@ public class Checker {
 	 * 
 	 */
 	public boolean check(String wrd) throws IOException{
+		// Inform
+		System.out.println("\"" + wrd + "\" is being Tested");
 		// Get Form
 		HtmlForm dic = pg.getFormByName("frm_search");
 		// Get Inputs
