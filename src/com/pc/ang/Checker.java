@@ -2,15 +2,111 @@ package com.pc.ang;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+
+import org.apache.commons.logging.LogFactory;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.IncorrectnessListener;
+import com.gargoylesoftware.htmlunit.ScriptException;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HTMLParserListener;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 
 public class Checker {
 
+	public WebClient c;
+	public HtmlPage pg;
+	
+	/**
+	 * Create Checker
+	 * @throws IOException 
+	 * Failed to Access https://www.dictionnaire-academie.fr/
+	 * @throws MalformedURLException 
+	 * Invalid URL
+	 * @throws FailingHttpStatusCodeException 
+	 * https://www.dictionnaire-academie.fr/ is down
+	 */
+	public Checker() throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+		// Remove Error Msg
+		LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
+		java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.OFF); 
+		java.util.logging.Logger.getLogger("org.apache.commons.httpclient").setLevel(Level.OFF);
+		// Create Objs
+		c = new WebClient();
+		// Settings
+		c.getOptions().setUseInsecureSSL(true);
+		c.getOptions().setCssEnabled(false);
+		c.getOptions().setAppletEnabled(true);
+		c.getOptions().setJavaScriptEnabled(true);
+		c.getOptions().setActiveXNative(true);
+		c.getOptions().setPrintContentOnFailingStatusCode(false);
+		// Error Removal
+		c.setIncorrectnessListener(new IncorrectnessListener() {
+			
+		    @Override
+		    public void notify(String arg0, Object arg1) {
+		    	
+		    }
+		});
+		c.setJavaScriptErrorListener(new JavaScriptErrorListener() {
+
+		    @Override
+		    public void timeoutError(HtmlPage arg0, long arg1, long arg2) {
+		        // TODO Auto-generated method stub
+
+		    }
+
+		    @Override
+		    public void scriptException(HtmlPage arg0, ScriptException arg1) {
+		        // TODO Auto-generated method stub
+
+		    }
+
+		    @Override
+		    public void malformedScriptURL(HtmlPage arg0, String arg1, MalformedURLException arg2) {
+		        // TODO Auto-generated method stub
+
+		    }
+
+		    @Override
+		    public void loadScriptError(HtmlPage arg0, URL arg1, Exception arg2) {
+		        // TODO Auto-generated method stub
+
+		    }
+
+			@Override
+			public void warn(String message, String sourceName, int line, String lineSource, int lineOffset) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		c.setHTMLParserListener(new HTMLParserListener() {
+
+			@Override
+			public void error(String message, URL url, String html, int line, int column, String key) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void warning(String message, URL url, String html, int line, int column, String key) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+
+		c.getOptions().setThrowExceptionOnFailingStatusCode(false);
+		c.getOptions().setThrowExceptionOnScriptError(false);
+		// Get Page
+		pg = c.getPage("https://www.dictionnaire-academie.fr/");
+		c.waitForBackgroundJavaScript(500);
+	}
+	
 	/**
 	 * Checks if the word is an anglicismes
 	 * 
@@ -18,28 +114,13 @@ public class Checker {
 	 * The word
 	 * 
 	 * @return
-	 * If anglicisme, TRUE
+	 * If it is an anglicisme, TRUE
+	 * Else, FALSE
 	 * 
 	 * @throws IOException 
-	 * Oof
-	 * @throws MalformedURLException 
-	 * Oof
-	 * @throws FailingHttpStatusCodeException 
-	 * Oof
-	 * @throws InterruptedException 
+	 * 
 	 */
-	public static boolean check(String wrd) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
-		// Creates New Client
-		WebClient c = new WebClient();
-		c.getOptions().setUseInsecureSSL(true);
-		c.getOptions().setCssEnabled(false);
-		c.getOptions().setAppletEnabled(true);
-		c.getOptions().setJavaScriptEnabled(true);
-		c.getOptions().setActiveXNative(true);
-		System.out.println("1");
-		// Get Page
-		HtmlPage pg = c.getPage("https://www.dictionnaire-academie.fr/");
-		c.waitForBackgroundJavaScript(2000);
+	public boolean check(String wrd) throws IOException{
 		// Get Form
 		HtmlForm dic = pg.getFormByName("frm_search");
 		// Get Inputs
@@ -48,29 +129,29 @@ public class Checker {
 		srch.type(wrd);
 		// Check Results
 		c.waitForBackgroundJavaScript(2000);
+		// Test
 		int test = pg.getByXPath("//div[contains(@class, 'noresult')]").size();
-		pg.refresh();
-		c.close();
+		// Refresh
+		refresh();
+		// Passed
 		if(test >= 1)
 			return true;
-		
-		/* Sample of Website
-		 <form name="frm_search" id="frm_search" action="/search" method="post">
-					<input name="term" class="hauteurAccueil" id="recherche" spellcheck="false" type="text" maxlength="255" placeholder="MOT À RECHERCHER" autocomplete="off">
-					<input name="options" id="search_options" type="hidden" value="1">
-					<div class="hauteurAccueil" id="btViderRecherche"></div>
-					<div class="autocomplete-items positionAccueil" id="rechercheautocomplete-list" style="display: none;">
-						<div id="contenantDeuxBoutons">
-							<div class="btRechercheActive" id="motCommencant" data-value="1"><a href="#">Mots commençant par</a></div>
-							<div class="btRechercheDisponible" id="motsProches" data-value="0"><a href="#">Mots proches</a></div>
-						</div>
-					<a href="https://www.dictionnaire-academie.fr/article/A9P3210-A" data-score="0.9998">Po, symb.</a><a href="https://www.dictionnaire-academie.fr/article/A9P3027" data-score="0.2941">pochade, n. f.</a><a href="https://www.dictionnaire-academie.fr/article/A9P3028" data-score="0.2941">pochage, n. m.</a><a href="https://www.dictionnaire-academie.fr/article/A9P3029" data-score="0.2941">pochard, -arde, n.</a><a href="https://www.dictionnaire-academie.fr/article/A9P3030" data-score="0.1971">pocharder (se), v. pron.</a><a href="https://www.dictionnaire-academie.fr/article/A8P1868" data-score="0.4098">poché, n. m.</a><a href="https://www.dictionnaire-academie.fr/article/A9P3031" data-score="0.4098">poche [I], n. f.</a><a href="https://www.dictionnaire-academie.fr/article/A9P3032" data-score="0.4098">poche [II], n. f.</a><a href="https://www.dictionnaire-academie.fr/article/A9P3033" data-score="0.3425">pocher, v. tr. et intr.</a><a href="https://www.dictionnaire-academie.fr/article/A9P3034" data-score="0.2577">pocheter, v. tr.</a><a href="https://www.dictionnaire-academie.fr/article/A9P3035" data-score="0.2294">pochetron, -onne, n.</a><a href="https://www.dictionnaire-academie.fr/article/A9P3036" data-score="0.1438">pochetronner (se), v. pron.</a><a href="https://www.dictionnaire-academie.fr/article/A9P3037" data-score="0.2577">pochette, n. f.</a><a href="https://www.dictionnaire-academie.fr/article/A9P3037-A" data-score="0.0991">pochette-surprise, n. f.</a><a href="https://www.dictionnaire-academie.fr/article/A9P3038" data-score="0.2941">pochoir, n. m.</a><a href="https://www.dictionnaire-academie.fr/article/A9P3039" data-score="0.3425">pochon [I], n. m.</a><a href="https://www.dictionnaire-academie.fr/article/A9P3040" data-score="0.3425">pochon [II], n. m.</a><a href="https://www.dictionnaire-academie.fr/article/A9P3041" data-score="0.2577">pochouse, n. f.</a></div>
-					<div id="explicationRecherche">
-						<p>Pour chercher un mot dans le dictionnaire, tapez simplement ses premières lettres. Utilisez le bouton « Mots proches » pour activer la correction orthographique et phonétique.</p>
-					</div>
-				</form>
-		 */
-		
+		// Failed
 		return false;
+	}
+	
+	public void refresh() {
+		// Get Page
+		try {
+			pg = c.getPage("https://www.dictionnaire-academie.fr/");
+		} catch (FailingHttpStatusCodeException | IOException e) {}
+		c.waitForBackgroundJavaScript(500);
+	}
+	
+	/**
+	 * Close Browser
+	 */
+	public void close() {
+		c.close();
 	}
 }
