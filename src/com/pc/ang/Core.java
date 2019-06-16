@@ -49,6 +49,13 @@ public class Core {
 		for(String art : ss) {
 			// No Capitals
 			art = art.toLowerCase();
+			// No Accents
+			art = art.replaceAll("à|â", "a");
+			art = art.replaceAll("ç", "c");
+			art = art.replaceAll("é|è|ê|ë", "e");
+			art = art.replaceAll("î|ï", "i");
+			art = art.replaceAll("ô", "o");
+			art = art.replaceAll("û|ù", "u");
 			// No Articles
 			art = art.replaceAll("les |l[ea] |l'|un(e)? |de(s)? |d'|[Àà] |au(x)? |ce(tte)?(s)? ", " ");
 			// No Pronouns

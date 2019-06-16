@@ -6,7 +6,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/andre/Documents/Projets d&apos;Eclipse/External REF/HTMLUnit/htmlunit-2.35.0-OSGi.jar" sourcepath="C:/Users/andre/Documents/Projets d&apos;Eclipse/External REF/HTMLUnit/htmlunit-2.35.0-src.zip">
+	<classpathentry exported="true" kind="lib" path="C:/Users/andre/Documents/Projets d&apos;Eclipse/External REF/HTMLUnit/htmlunit-2.35.0-OSGi.jar" sourcepath="C:/Users/andre/Documents/Projets d&apos;Eclipse/External REF/HTMLUnit/htmlunit-2.35.0-src.zip">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
