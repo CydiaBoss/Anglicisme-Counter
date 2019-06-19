@@ -72,7 +72,8 @@ public class Core {
 			// No Capitals
 			art = art.toLowerCase();
 			// No Articles
-			art = art.replaceAll("les |l[ea] |l'|un(e)? |de(s)? |d'|[¿‡] |au(x)? |ce(tte)?(s)? ", "");
+			art = art.replaceAll("[dl]'", "");
+//			art = art.replaceAll("les |l[ea] |l'|un(e)? |de(s)? |d'|[¿‡] |au(x)? |ce(tte)?(s)? ", "");
 //			// No Pronouns
 //			art = art.replaceAll("(-)?(je |tu |j'|noun |vous |(qu')?il(s)? |(qu')?elle(s)? |[(qu') ]on |qui )|[mts](e |')|[' ]en |[' ]y ", " ");
 			// No Numbers
