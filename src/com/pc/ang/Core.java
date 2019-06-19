@@ -71,14 +71,14 @@ public class Core {
 			wrdCnt += art.split(" ").length;
 			// No Capitals
 			art = art.toLowerCase();
-//			// No Articles
-//			art = art.replaceAll("les |l[ea] |l'|un(e)? |de(s)? |d'|[Àà] |au(x)? |ce(tte)?(s)? ", " ");
+			// No Articles
+			art = art.replaceAll("les |l[ea] |l'|un(e)? |de(s)? |d'|[Àà] |au(x)? |ce(tte)?(s)? ", "");
 //			// No Pronouns
 //			art = art.replaceAll("(-)?(je |tu |j'|noun |vous |(qu')?il(s)? |(qu')?elle(s)? |[(qu') ]on |qui )|[mts](e |')|[' ]en |[' ]y ", " ");
 			// No Numbers
 			art = art.replaceAll("[0-9](%)?", "");
-//			// No Punctuation
-//			art = art.replaceAll("[\\.,]|( )?[!\\?:;]| [«»]", " ");
+			// No Punctuation
+			art = art.replaceAll("[\\.,!\\?:;«»]", "");
 			// No Random Whitespace
 			art = art.replaceAll("( )+", " ");
 			// Trim
