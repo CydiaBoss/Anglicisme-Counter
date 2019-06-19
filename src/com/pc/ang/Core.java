@@ -7,9 +7,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Scanner;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
@@ -36,36 +38,38 @@ public class Core {
 		f = fold.listFiles();
 		ss = new ArrayList<String>();
 		// Reading time
-		BufferedReader s = new BufferedReader(new InputStreamReader(System.in));
 		for(File file : f) {
-			s = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
+			BufferedReader s = new BufferedReader(new InputStreamReader(new FileInputStream(file), Charset.forName("ISO-8859-1")));
 			String part;
-			while ((part = s.readLine()) != null)
+			while ((part = s.readLine()) != null) 
 				ss.add(part);
+			s.close();
 		}
-		s.close();
 		// Filtering & Analysising
 		Hashtable<String, Integer> cLt = new Hashtable<>();
+		int wrdCnt = 0;
 		for(String art : ss) {
-			// No Capitals
-			art = art.toLowerCase();
-			// No Accents
-			art = art.replaceAll("à|â", "a");
-			art = art.replaceAll("ç", "c");
-			art = art.replaceAll("é|è|ê|ë", "e");
-			art = art.replaceAll("î|ï", "i");
-			art = art.replaceAll("ô", "o");
-			art = art.replaceAll("û|ù", "u");
-			// No Articles
-			art = art.replaceAll("les |l[ea] |l'|un(e)? |de(s)? |d'|[Àà] |au(x)? |ce(tte)?(s)? ", " ");
-			// No Pronouns
-			art = art.replaceAll("(-)?(je |tu |j'|noun |vous |(qu')?il(s)? |(qu')?elle(s)? |[(qu') ]on |qui )|[mts](e |')|[' ]en |[' ]y ", " ");
-			// No Numbers
-			art = art.replaceAll("[0-9](%)?", " ");
-			// No Punctuation
-			art = art.replaceAll("[\\.,]|( )?[!\\?:;]| [«»]", " ");
-			// No Random Whitespace
-			art = art.replaceAll("( )+", " ");
+			// Word Count
+			wrdCnt += art.split(" ").length;
+//			// No Accents
+//			art = art.replaceAll("[Àà]|[Ââ]", "a");
+//			art = art.replaceAll("[Çç]", "c");
+//			art = art.replaceAll("[Éé]|[Èè]|[Êê]|[Ëë]", "e");
+//			art = art.replaceAll("[Îî]|[Ïï]", "i");
+//			art = art.replaceAll("[Ôô]", "o");
+//			art = art.replaceAll("[Ûû]|[Ùù]", "u");
+//			// No Capitals
+//			art = art.toLowerCase();
+//			// No Articles
+//			art = art.replaceAll("les |l[ea] |l'|un(e)? |de(s)? |d'|[Àà] |au(x)? |ce(tte)?(s)? ", " ");
+//			// No Pronouns
+//			art = art.replaceAll("(-)?(je |tu |j'|noun |vous |(qu')?il(s)? |(qu')?elle(s)? |[(qu') ]on |qui )|[mts](e |')|[' ]en |[' ]y ", " ");
+//			// No Numbers
+//			art = art.replaceAll("[0-9](%)?", " ");
+//			// No Punctuation
+//			art = art.replaceAll("[\\.,]|( )?[!\\?:;]| [«»]", " ");
+//			// No Random Whitespace
+//			art = art.replaceAll("( )+", " ");
 			// Trim
 			art = art.trim();
 			// Counting
@@ -79,25 +83,27 @@ public class Core {
 		// Link to Dictionary established
 		dict = new Checker();
 		// Create Results
-		String toPrint = "";
-		int wrdCnt = 0;
+		String toPrint = "Les Anglicismes qui existent dans les articles:\n\n";
 		for(String ky : cLt.keySet()) {
 			if (dict.check(ky)) {
 				toPrint += ky + " - " + cLt.get(ky) + "\n";
 				System.err.println("\"" + ky + "\" - Anglicisme");
 			}else
 				System.out.println("\"" + ky + "\" - Pas d'Anglicisme");
-			wrdCnt += cLt.get(ky);
 		}
 		toPrint += "\n\nWord Count: " + wrdCnt;
 		// Writer
-		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(reslt), StandardCharsets.UTF_8);
+		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(reslt), StandardCharsets.ISO_8859_1);
 		writer.write(toPrint);
 		writer.flush();
 		writer.close();
 		// Close Browser
 		dict.close();
 		// Finish
-		System.out.println(toPrint + "\nDone");
+		System.out.println("\n" + toPrint + "\nDone");
+		// Pause
+		Scanner sc = new Scanner(System.in);
+		sc.nextLine();
+		sc.close();
 	}
 }
